@@ -9,6 +9,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import ru.kata.spring.boot_security.demo.models.Person;
 import ru.kata.spring.boot_security.demo.models.Role;
@@ -18,6 +19,7 @@ import ru.kata.spring.boot_security.demo.services.RoleService;
 
 import javax.validation.Valid;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -67,28 +69,39 @@ public class AdminController {
         return "redirect:/admin";
     }
 
-    @GetMapping("/edit/{id}")
-    public String edit(Model model, @PathVariable("id") long id) {
-        model.addAttribute("person", peopleService.userById(id));
-        List<Role> roles = roleService.allRoles();
-        model.addAttribute("roles", roles);
-        return "admin/edit_user_form";
-    }
 
-        @PatchMapping("/edit/{id}")
-    public String update(@ModelAttribute("person") @Valid Person person,
-                         BindingResult bindingResult,
-                         @PathVariable("id") int id,
-                         @RequestParam(value = "roles", required = false) List<String> roles,
-                         @RequestParam(value = "password", required = false) String password) {
-        if (bindingResult.hasErrors())
-            return "admin/edit_user_form";
+//    @GetMapping("/edit/{id}")
+//    public String edit(Model model, @PathVariable("id") long id) {
+//        model.addAttribute("person", peopleService.userById(id));
+//        List<Role> roles = roleService.allRoles();
+//        model.addAttribute("roles", roles);
+//        return "admin/edit_user_form";
+//    }
 
-        acceptRolesFromForm(person, roles);
-        if (!password.isEmpty()){
-            person.setPassword(passwordEncoder.encode(password));
+    @PostMapping("/edit")
+    public String edit(@RequestParam("user_ID") Long id,
+                       @RequestParam("user_Username") String username,
+                       @RequestParam("user_Password") String password,
+                       @RequestParam("user_Email") String email,
+                       @RequestParam("user_Role") String roles) {
+
+        Person person = peopleService.userById(id);
+        System.out.println(person);
+        person.setUsername(username);
+        person.setPassword(passwordEncoder.encode(password));
+        person.setEmail(email);
+
+        Set<Role> rolesSet = new HashSet<>();
+        Role foundRole = roleService.findByName(roles);
+        if (foundRole != null) {
+            rolesSet.add(foundRole);
+        } else {
+            rolesSet.add(roleService.findByName("ROLE_USER"));
         }
+        person.setRole(rolesSet);
+
         peopleService.updateUser(id, person);
+
         return "redirect:/admin";
     }
 
