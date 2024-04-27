@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit user form</title>
+</head>
+<body>
+<h2>Edit User</h2>
+<a href="/logout">Logout</a>
+<hr/>
+<form th:method="PATCH" th:action="@{/admin/{id}(id=${person.getId()})}" th:object="${person}">
+    <label for="name">Enter username: </label>
+    <input type="text" th:field="*{username}" id="name"/>
+    <div style="color:red" th:if="${#fields.hasErrors('username')}" th:errors="*{username}">Name Error</div>
+    <br/>
+    <label for="password">Enter password: </label>
+    <input type="text" id="password" name="password" required minlength="8"/>
+    <br/>
+    <label for="email">Enter email: </label>
+    <input type="text" th:field="*{email}" id="email"/>
+    <div style="color:red" th:if="${#fields.hasErrors('email')}" th:errors="*{email}">Email Error</div>
+    <br/>
+    <tr>
+        <td>Roles: </td>
+        <td>
+            <th:block th:each="role : ${roles}">
+                <input type="checkbox" name="roles" th:value="${role.name}"/>
+                <label th:text="${role.name}"></label>
+            </th:block>
+        </td>
+    </tr>
+    <input type="submit" value="Update!"/>
+</form>
+
+</body>
+</html>

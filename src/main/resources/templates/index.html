@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org"
+      xmlns:sec="http://www.w3.org/1999/xhtml">
+<head>
+    <title>User page</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        .nav-item .nav-link {
+            margin-right: -15px; /* Убрать отрицательный правый внешний отступ, если он есть */
+            margin-left: -15px; /* Убрать отрицательный левый внешний отступ, если он есть */
+            padding-right: 15px; /* Восстановить правый внутренний отступ */
+            padding-left: 15px; /* Восстановить левый внутренний отступ */
+        }
+
+        /* Дополнительный класс для текста внутри ссылки, если нужно */
+        .nav-link-text {
+            padding-left: 15px; /* Вернуть внутренний отступ тексту */
+            padding-right: 15px; /* Вернуть внутренний отступ тексту */
+        }
+    </style>
+</head>
+<body>
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg bg-dark navbar-dark">
+    <div>
+        <span class="text-white font-weight-bold" th:text="${person.email}"></span>
+        <span class="text-white"> with roles: </span>
+        <span class="text-white font-weight-bold" th:each="role, iterStat : ${person.role}"
+              th:text="${role.name} + (iterStat.last ? '' : ', ')">
+            </span>
+    </div>
+    <div class="navbar-nav ml-auto">
+        <a class="btn btn-outline-light my-2 my-sm-0" href="/logout" style="color: #adb5bd; background-color: transparent; border-color: transparent;">Logout</a>
+    </div>
+</nav>
+<div class="container-fluid">
+    <div class="row">
+        <!-- Меню слева -->
+        <div class="col-md-2 bg-white"> <!-- белый фон -->
+            <ul class="nav flex-column">
+                <!-- Кнопка Admin -->
+                <div sec:authorize="hasRole('ROLE_ADMIN')">
+                <li class="nav-item">
+                    <a href="/admin" class="nav-link text-primary" style="border-radius: 0;">Admin</a> <!-- синий текст -->
+                </li>
+                    </div>
+                <!-- Кнопка User -->
+                <li class="nav-item">
+                    <a href="/user" class="nav-link bg-primary text-white" style="border-radius: 0;">User</a> <!-- активная кнопка с синим фоном и белым текстом -->
+                </li>
+            </ul>
+        </div>
+        <!-- Основной контент -->
+        <div class="col-md-10 bg-light" style="min-height: 100vh;">
+            <h1 class="display-5 font-weight-bold">User information-page</h1>
+            <div class="card">
+                <div class="card-header font-weight-bold">
+                    About user
+                </div>
+                <table class="table table-hover">
+                    <thead>
+                    <tr>
+                        <th>ID:</th>
+                        <th>Username:</th>
+                        <th>Email:</th>
+                        <th>Roles:</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td th:text="${person.id}"></td>
+                        <td th:text="${person.username}">
+                        <td th:text="${person.email}"></td>
+                        <td>
+                            <ul>
+                                <li th:each="role : ${person.role}" th:text="${role.name}"></li>
+                            </ul>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Подключение Bootstrap JavaScript и Popper.js -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
