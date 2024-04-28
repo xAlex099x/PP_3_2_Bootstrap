@@ -57,6 +57,11 @@ public class AdminController {
                          @RequestParam("newUser_Email") String email,
                          @RequestParam(value = "newUser_Role", required = false) String roles) {
 
+        //Если пользователь с таким именем уже существует, то возвращаемся на страницу.
+        //Отображение ошибок сделаю на следующем задании.
+        if (peopleService.userByUsername(username)!= null) {
+            return "redirect:/admin?error=true";
+        }
 
         Person person = new Person();
         person.setUsername(username);
@@ -77,8 +82,8 @@ public class AdminController {
                        @RequestParam("user_Email") String email,
                        @RequestParam(value = "user_Role", required = false) String roles) {
 
+
         Person person = peopleService.userById(id);
-        System.out.println(person);
         person.setUsername(username);
         person.setPassword(passwordEncoder.encode(password));
         person.setEmail(email);
