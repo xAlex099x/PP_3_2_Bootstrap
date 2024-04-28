@@ -27,7 +27,7 @@
 </head>
 <body>
 
-<!-- Navbar -->
+<!-- Навигационная панель -->
 <nav class="navbar navbar-expand-lg bg-dark navbar-dark">
     <div>
         <span class="text-white font-weight-bold" th:text="${person.email}"></span>
@@ -47,11 +47,9 @@
         <!-- Меню слева -->
         <div class="col-md-2 bg-white">
             <ul class="nav flex-column">
-                <!-- Кнопка Admin -->
                 <li class="nav-item">
                     <a href="/admin" class="nav-link bg-primary text-white">Admin</a>
                 </li>
-                <!-- Кнопка User -->
                 <li class="nav-item">
                     <a href="/index" class="nav-link text-primary">User</a>
                 </li>
@@ -66,8 +64,10 @@
                 <a href="#" class="btn btn-white active"
                    style="color: #6c757d; background-color: #FFFFFF ; border-color: #DCDCDC;">Users
                     table</a>
-                <a href="/admin/new" class="btn btn-link text-primary" style="text-decoration: none; color: inherit;">New
-                    User</a>
+                <button type="button" class="btn btn-link text-primary" style="text-decoration: none; color: inherit;"
+                        data-toggle="modal" data-target="#createUserModal">New
+                    User
+                </button>
             </div>
             <div class="card">
                 <div class="card-header font-weight-bold">
@@ -104,9 +104,12 @@
                             </button>
                         </td>
                         <td>
-                            <form th:action="@{/admin/delete/{id}(id=${person.id})}" th:method="delete">
-                                <button type="submit" class="btn btn-danger">Delete</button>
-                            </form>
+                            <button type="button" class="btn btn-danger delete-user-button" data-toggle="modal"
+                                    data-target="#deleteUserModal"
+                                    th:data-id="${person.id}" th:data-username="${person.username}"
+                                    th:data-email="${person.email}">
+                                Delete
+                            </button>
                         </td>
                     </tr>
                     </tbody>
@@ -115,7 +118,52 @@
         </div>
     </div>
 </div>
-<!-- Modal -->
+
+<!-- Modal new user -->
+<div class="modal fade" id="createUserModal" tabindex="-1" role="dialog" aria-labelledby="createUserModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="createUserModalLabel">Create New User</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body text-center">
+                <form id="createUserForm" th:action="@{/admin/new}" th:method="POST" class="mx-auto w-50">
+                    <div class="form-group">
+                        <label for="newUser_Username"><strong>Username</strong></label>
+                        <input type="text" class="form-control" id="newUser_Username" name="newUser_Username"
+                               required>
+                    </div>
+                    <div class="form-group">
+                        <label for="newUser_Password"><strong>Password</strong></label>
+                        <input type="password" class="form-control" id="newUser_Password" name="newUser_Password"
+                               required>
+                    </div>
+                    <div class="form-group">
+                        <label for="newUser_Email"><strong>Email</strong></label>
+                        <input type="email" class="form-control" id="newUser_Email" name="newUser_Email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="newUser_Role" class="col-form-label"><strong>Role</strong></label>
+                        <select size="2" class="form-control" id="newUser_Role" name="newUser_Role">
+                            <option value="ROLE_ADMIN">Admin</option>
+                            <option value="ROLE_USER">User</option>
+                        </select>
+                    </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="submit" class="btn btn-primary">Add new user</button>
+            </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Edit-->
 <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
      aria-hidden="true">
     <div class="modal-dialog" role="document">
@@ -126,31 +174,32 @@
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <div class="modal-body">
-                <form id="userForm" th:method="POST" th:action="@{/admin/edit}">
+            <div class="modal-body text-center">
+                <form id="userForm" th:method="POST" th:action="@{/admin/edit}" class="mx-auto w-50">
                     <div class="form-group">
-                        <label for="user_ID" class="col-form-label">ID:</label>
-                        <input type="text" class="form-control" id="user_ID" name="user_ID"readonly>
+                        <label for="user_ID" class="col-form-label"><strong>ID:</strong></label>
+                        <input type="text" class="form-control" id="user_ID" name="user_ID" readonly>
                     </div>
                     <div class="form-group">
-                        <label for="user_Username" class="col-form-label">USERNAME:</label>
+                        <label for="user_Username" class="col-form-label"><strong>USERNAME:</strong></label>
                         <input type="text" class="form-control" id="user_Username" name="user_Username">
                     </div>
                     <div class="form-group">
-                        <label for="user_Password" class="col-form-label">PASSWORD:</label>
+                        <label for="user_Password" class="col-form-label"><strong>PASSWORD:</strong></label>
                         <input type="text" class="form-control" id="user_Password" name="user_Password">
                     </div>
                     <div class="form-group">
-                        <label for="user_EMAIL" class="col-form-label">EMAIL:</label>
+                        <label for="user_EMAIL" class="col-form-label"><strong>EMAIL:</strong></label>
                         <input type="text" class="form-control" id="user_EMAIL" name="user_Email">
                     </div>
                     <div class="form-group">
-                        <label for="user_Role" class="col-form-label">ROLE:</label>
+                        <label for="user_Role" class="col-form-label"><strong>ROLE:</strong></label>
                         <select size=2 class="form-control" id="user_Role" name="user_Role">
                             <option value="ROLE_ADMIN">Admin</option>
                             <option value="ROLE_USER">User</option>
                         </select>
                     </div>
+            </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                         <button type="submit" class="btn btn-primary">Edit</button>
@@ -161,7 +210,52 @@
     </div>
 </div>
 
+<!-- Modal Delete User -->
+<div class="modal fade" id="deleteUserModal" tabindex="-1" role="dialog" aria-labelledby="deleteUserModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteUserModalLabel">Delete user</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body text-center">
+                <form id="deleteUserForm" th:method="POST" th:action="@{/admin/delete}" class="mx-auto w-50">
+                    <div class="form-group">
+                        <label for="deleteUser_ID"><strong>ID:</strong></label>
+                        <input type="text" class="form-control" id="deleteUser_ID" name="deleteUser_ID" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label for="deleteUser_Username"><strong>Username:</strong></label>
+                        <input type="text" class="form-control" id="deleteUser_Username" name="deleteUser_Username"
+                               readonly>
+                    </div>
+                    <div class="form-group">
+                        <label for="deleteUser_Email"><strong>Email:</strong></label>
+                        <input type="email" class="form-control" id="deleteUser_Email" name="deleteUser_Email"
+                               readonly>
+                    </div>
+                    <div class="form-group">
+                        <label for="deleteUser_Role"><strong>Role:</strong></label>
+                        <select size=2 class="form-control" id="deleteUser_Role" name="deleteUser_Role" disabled>
+                            <option value="ROLE_ADMIN">Admin</option>
+                            <option value="ROLE_USER">User</option>
+                        </select>
+                    </div>
+            </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-danger">Delete</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
 
+<!-- Edit user script-->
 <script>
     $('#exampleModal').on('show.bs.modal', function (event) {
         var button = $(event.relatedTarget); // Кнопка, которая активировала модальное окно
@@ -176,6 +270,20 @@
         modal.find('#user_EMAIL').val(email);
     });
 </script>
-<!--<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>-->
+<!-- Delete user script-->
+<script>
+    $('#deleteUserModal').on('show.bs.modal', function (event) {
+        var button = $(event.relatedTarget);
+        var id = button.data('id');
+        var username = button.data('username');
+        var email = button.data('email');
+
+        var modal = $(this);
+        modal.find('#deleteUser_ID').val(id);
+        modal.find('#deleteUser_Username').val(username);
+        modal.find('#deleteUser_Email').val(email);
+    });
+</script>
+
 </body>
 </html>

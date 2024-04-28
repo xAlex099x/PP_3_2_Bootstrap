@@ -8,6 +8,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -18,14 +20,14 @@ import ru.kata.spring.boot_security.demo.services.PeopleService;
 import ru.kata.spring.boot_security.demo.services.RoleService;
 
 import javax.validation.Valid;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Controller
-
+@Validated
 @RequestMapping("/admin")
 public class AdminController {
     private final RoleService roleService;
@@ -49,41 +51,31 @@ public class AdminController {
         return "admin/admin_page";
     }
 
-    @GetMapping("/new")
-    public String newPerson(@ModelAttribute("person") Person person, Model model) {
-        List<Role> roles = roleService.allRoles();
-        model.addAttribute("roles", roles);
-        return "admin/new_user";
-    }
-
     @PostMapping("/new")
-    public String create(@ModelAttribute("person") @Valid Person person,
-                         @RequestParam(value = "roles", required = false) List<String> roles,
-                         BindingResult bindingResult) {
-        if (bindingResult.hasErrors())
-            return "admin/new_user";
+    public String create(@RequestParam("newUser_Username") String username,
+                         @RequestParam("newUser_Password") String password,
+                         @RequestParam("newUser_Email") String email,
+                         @RequestParam(value = "newUser_Role", required = false) String roles) {
 
-        acceptRolesFromForm(person, roles);
+
+        Person person = new Person();
+        person.setUsername(username);
+        person.setPassword(passwordEncoder.encode(password));
+        person.setEmail(email);
+
+        Set<Role> rolesSet = getRoles(roles);
+        person.setRole(rolesSet);
 
         peopleService.addUser(person);
         return "redirect:/admin";
     }
-
-
-//    @GetMapping("/edit/{id}")
-//    public String edit(Model model, @PathVariable("id") long id) {
-//        model.addAttribute("person", peopleService.userById(id));
-//        List<Role> roles = roleService.allRoles();
-//        model.addAttribute("roles", roles);
-//        return "admin/edit_user_form";
-//    }
 
     @PostMapping("/edit")
     public String edit(@RequestParam("user_ID") Long id,
                        @RequestParam("user_Username") String username,
                        @RequestParam("user_Password") String password,
                        @RequestParam("user_Email") String email,
-                       @RequestParam("user_Role") String roles) {
+                       @RequestParam(value = "user_Role", required = false) String roles) {
 
         Person person = peopleService.userById(id);
         System.out.println(person);
@@ -91,13 +83,7 @@ public class AdminController {
         person.setPassword(passwordEncoder.encode(password));
         person.setEmail(email);
 
-        Set<Role> rolesSet = new HashSet<>();
-        Role foundRole = roleService.findByName(roles);
-        if (foundRole != null) {
-            rolesSet.add(foundRole);
-        } else {
-            rolesSet.add(roleService.findByName("ROLE_USER"));
-        }
+        Set<Role> rolesSet = getRoles(roles);
         person.setRole(rolesSet);
 
         peopleService.updateUser(id, person);
@@ -105,22 +91,20 @@ public class AdminController {
         return "redirect:/admin";
     }
 
-    private void acceptRolesFromForm(@ModelAttribute("person") @Valid Person person, @RequestParam(value = "roles", required = false) List<String> roles) {
-        Set<Role> userRoles;
-        if (roles != null) {
-            userRoles = roles.stream()
-                    .map(roleService::findByName)
-                    .collect(Collectors.toSet());
-            person.setRole(userRoles);
-        } else {
-            userRoles = Collections.singleton(roleService.findByName("ROLE_USER"));
-            person.setRole(userRoles);
-        }
-    }
-
-    @DeleteMapping("/delete/{id}")
-    public String deleteUser(@PathVariable("id") long id) {
+    @PostMapping("/delete")
+    public String deleteUser(@RequestParam("deleteUser_ID") Long id) {
         peopleService.deleteUser(id);
         return "redirect:/admin";
+    }
+
+    private Set<Role> getRoles(String roles) {
+        Set<Role> rolesSet = new HashSet<>();
+        Role foundRole = roleService.findByName(roles);
+        if (foundRole != null) {
+            rolesSet.add(foundRole);
+        } else {
+            rolesSet.add(roleService.findByName("ROLE_USER"));
+        }
+        return rolesSet;
     }
 }
