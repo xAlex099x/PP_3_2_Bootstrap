@@ -48,6 +48,14 @@ public class AdminController {
         return "admin/admin_page";
     }
 
+    @GetMapping("/new")
+    public String newUser(Model model) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        PersonDetails details = (PersonDetails) auth.getPrincipal();
+        model.addAttribute("person", this.convertToDto(details.getPerson()));
+        return "admin/new_user_page";
+    }
+
     @PostMapping("/new")
     public String create(@RequestParam("newUser_Username") @NotBlank @Size(min = 2, max = 40) String username,
                          @RequestParam("newUser_Password") @NotBlank @Size(min = 2, max = 16) String password,

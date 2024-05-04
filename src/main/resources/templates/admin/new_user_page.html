@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:sec="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8" xmlns:th="http://www.thymeleaf.org">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <title>Admin panel</title>
+
+    <!-- Подключение Bootstrap JavaScript и Popper.js -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <style>
+        .nav-item .nav-link {
+            margin-right: -15px;
+            margin-left: -15px;
+            padding-right: 15px;
+            padding-left: 15px;
+        }
+
+        .nav-link-text {
+            padding-left: 15px;
+            padding-right: 15px;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        label {
+            display: block;
+            font-weight: bold;
+        }
+
+        .container {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<!-- Навигационная панель -->
+<nav class="navbar navbar-expand-lg bg-dark navbar-dark">
+    <div>
+        <span class="text-white font-weight-bold" th:text="${person.email}"></span>
+        <span class="text-white"> with roles: </span>
+        <span class="text-white font-weight-bold" th:each="role, iterStat : ${person.roles}"
+              th:text="${role} + (iterStat.last ? '' : ', ')">
+            </span>
+    </div>
+    <div class="navbar-nav ml-auto">
+        <a class="btn btn-outline-light my-2 my-sm-0" href="/logout"
+           style="color: #adb5bd; background-color: transparent; border-color: transparent;">Logout</a>
+    </div>
+</nav>
+
+<div class="container-fluid">
+    <div class="row">
+        <!-- Меню слева -->
+        <div class="col-md-2 bg-white">
+            <ul class="nav flex-column">
+                <li class="nav-item">
+                    <a href="/admin" class="nav-link bg-primary text-white">Admin</a>
+                </li>
+                <li class="nav-item">
+                    <a href="/user" class="nav-link text-primary">User</a>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Основной контент -->
+        <div class="col-md-10 bg-light" style="min-height: 100vh;">
+            <h1 class="display-5 font-weight-bold">Admin panel</h1>
+            <!-- Кнопки управления -->
+            <div>
+                <a href="/admin" class="btn btn-link text-primary" style="text-decoration: none; color: inherit;"
+                   >Users
+                    table</a>
+                <a href="#" type="button" class="btn btn-white active" style="color: #6c757d; background-color: #FFFFFF ; border-color: #DCDCDC;">New
+                    User
+                </a>
+            </div>
+            <div class="card">
+                <div class="card-header font-weight-bold">
+                    Add new user
+                </div>
+                <div class="card-body mx-auto">
+                    <form id="userForm" method="POST" action="/admin/new" th:action="@{/admin/new}" th:csrf>
+                        <div class="form-group">
+                            <label class="text-center" for="newUser_Username">Username:</label>
+                            <input type="text" id="newUser_Username" name="newUser_Username" class="form-control" required minlength="2" maxlength="40">
+                        </div>
+                        <div class="form-group">
+                            <label class="text-center" for="newUser_Password">Password:</label>
+                            <input type="password" id="newUser_Password" name="newUser_Password" class="form-control" required minlength="2" maxlength="16">
+                        </div>
+                        <div class="form-group" >
+                            <label class="text-center" for="newUser_Email">Email:</label>
+                            <input type="email" id="newUser_Email" name="newUser_Email" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="text-center" for="newUser_Role">Role:</label>
+                            <select id="newUser_Role" name="newUser_Role" class="form-control" multiple size="2">
+                                <option value="ROLE_ADMIN">Admin</option>
+                                <option value="ROLE_USER">User</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary mx-auto d-block">Add new user</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

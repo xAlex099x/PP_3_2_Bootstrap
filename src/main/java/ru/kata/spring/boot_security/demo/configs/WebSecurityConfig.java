@@ -9,6 +9,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.thymeleaf.extras.springsecurity5.dialect.SpringSecurityDialect;
 import ru.kata.spring.boot_security.demo.services.PersonDetailsService;
 
@@ -29,8 +30,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     //Настройка самого Spring Security и авторизации
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.authorizeRequests()
+        http.csrf().csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
+                .and()
+                .authorizeRequests()
                 .antMatchers("/admin").hasRole(RolesEnum.ADMIN.getRoleNameWithoutPrefix())
+                .antMatchers("/admin/*").hasRole(RolesEnum.ADMIN.getRoleNameWithoutPrefix())
                 .antMatchers("/user").hasAnyRole(RolesEnum.USER.getRoleNameWithoutPrefix(), RolesEnum.ADMIN.getRoleNameWithoutPrefix())
                 .anyRequest().authenticated()
                 .and()
