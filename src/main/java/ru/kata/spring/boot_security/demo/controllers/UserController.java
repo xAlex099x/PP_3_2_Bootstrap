@@ -10,11 +10,11 @@ import ru.kata.spring.boot_security.demo.security.PersonDetails;
 @Controller
 public class UserController {
 
-    @GetMapping("/index")
+    @GetMapping("/user")
     public String index(Model model) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         PersonDetails details = (PersonDetails) auth.getPrincipal();
         model.addAttribute("person", details.getPerson());
-        return "/index";
+        return "/user";
     }
 }

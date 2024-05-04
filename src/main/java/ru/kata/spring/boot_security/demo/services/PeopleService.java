@@ -17,9 +17,9 @@ public interface PeopleService {
 
     public Person userById(long id);
 
-    public void addUser(String username, String password, String email, String roles);
+    public void addUser(String username, String password, String email, String[] roles);
 
-    public void updateUser(long id, String username, String password, String email, String roles);
+    public void updateUser(long id, String username, String password, String email, String[] roles);
 
     public void deleteUser(long id);
 }

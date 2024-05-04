@@ -25,18 +25,18 @@ public class StartupApplicationListener implements ApplicationListener<ContextRe
     @Override
     public void onApplicationEvent(ContextRefreshedEvent event) {
         // Проверяем наличие ролей Admin и User в базе данных, а так же root пользователя.
-        Role adminRole = roleServiceImpl.findByName("ROLE_ADMIN");
-        Role userRole = roleServiceImpl.findByName("ROLE_USER");
+        Role adminRole = roleServiceImpl.findByName(RolesEnum.ADMIN.getRoleName());
+        Role userRole = roleServiceImpl.findByName(RolesEnum.USER.getRoleName());
         Person Admin = peopleServiceImpl.userByUsername("Testuser");
 
         if (adminRole == null) {
-            roleServiceImpl.save(new Role("ROLE_ADMIN"));
+            roleServiceImpl.save(new Role(RolesEnum.ADMIN.getRoleName()));
         }
         if (userRole == null) {
-            roleServiceImpl.save(new Role("ROLE_USER"));
+            roleServiceImpl.save(new Role(RolesEnum.USER.getRoleName()));
         }
         if (Admin == null) {
-            peopleServiceImpl.addUser("Testuser","Testuser","Test@Test.com","ROLE_ADMIN");
+            peopleServiceImpl.addUser("Testuser","Testuser","Test@Test.com", new String[]{RolesEnum.ADMIN.getRoleName()});
         }
     }
 }

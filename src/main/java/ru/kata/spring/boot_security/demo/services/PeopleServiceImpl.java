@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.kata.spring.boot_security.demo.configs.RolesEnum;
 import ru.kata.spring.boot_security.demo.models.Person;
 import ru.kata.spring.boot_security.demo.models.Role;
 import ru.kata.spring.boot_security.demo.repositories.PeopleRepository;
@@ -45,7 +46,7 @@ public class PeopleServiceImpl implements PeopleService {
     }
 
     @Transactional
-    public void addUser(String username, String password, String email, String roles) {
+    public void addUser(String username, String password, String email, String[] roles) {
 
         Person person = new Person();
 
@@ -53,13 +54,13 @@ public class PeopleServiceImpl implements PeopleService {
         person.setPassword(passwordEncoder.encode(password));
         person.setEmail(email);
         Set<Role> rolesSet = getRoles(roles);
-        person.setRole(rolesSet);
+        person.setRoles(rolesSet);
 
         peopleRepository.save(person);
     }
 
     @Transactional
-    public void updateUser(long id, String username, String password, String email, String roles) {
+    public void updateUser(long id, String username, String password, String email, String[] roles) {
         if (this.userById(id) != null) {
             Person updatedUser = this.userById(id);
 
@@ -67,7 +68,7 @@ public class PeopleServiceImpl implements PeopleService {
             updatedUser.setPassword(passwordEncoder.encode(password));
             updatedUser.setEmail(email);
             Set<Role> rolesSet = getRoles(roles);
-            updatedUser.setRole(rolesSet);
+            updatedUser.setRoles(rolesSet);
 
             peopleRepository.save(updatedUser);
         } else {
@@ -85,13 +86,15 @@ public class PeopleServiceImpl implements PeopleService {
         }
     }
 
-    private Set<Role> getRoles(String roles) {
+    private Set<Role> getRoles(String[] roles) {
         Set<Role> rolesSet = new HashSet<>();
-        Role foundRole = roleServiceImpl.findByName(roles);
+        Role foundRole = roleServiceImpl.findByName(roles[0]);
         if (foundRole != null) {
-            rolesSet.add(foundRole);
+            for (String role : roles) {
+                rolesSet.add(roleServiceImpl.findByName(role));
+            }
         } else {
-            rolesSet.add(roleServiceImpl.findByName("ROLE_USER"));
+            rolesSet.add(roleServiceImpl.findByName(RolesEnum.USER.getRoleName()));
         }
         return rolesSet;
     }

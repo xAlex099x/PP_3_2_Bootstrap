@@ -12,16 +12,15 @@
 
     <style>
         .nav-item .nav-link {
-            margin-right: -15px; /* Убрать отрицательный правый внешний отступ, если он есть */
-            margin-left: -15px; /* Убрать отрицательный левый внешний отступ, если он есть */
-            padding-right: 15px; /* Восстановить правый внутренний отступ */
-            padding-left: 15px; /* Восстановить левый внутренний отступ */
+            margin-right: -15px;
+            margin-left: -15px;
+            padding-right: 15px;
+            padding-left: 15px;
         }
 
-        /* Дополнительный класс для текста внутри ссылки, если нужно */
         .nav-link-text {
-            padding-left: 15px; /* Вернуть внутренний отступ тексту */
-            padding-right: 15px; /* Вернуть внутренний отступ тексту */
+            padding-left: 15px;
+            padding-right: 15px;
         }
     </style>
 </head>
@@ -32,8 +31,8 @@
     <div>
         <span class="text-white font-weight-bold" th:text="${person.email}"></span>
         <span class="text-white"> with roles: </span>
-        <span class="text-white font-weight-bold" th:each="role, iterStat : ${person.role}"
-              th:text="${role.name} + (iterStat.last ? '' : ', ')">
+        <span class="text-white font-weight-bold" th:each="role, iterStat : ${person.roles}"
+              th:text="${role} + (iterStat.last ? '' : ', ')">
             </span>
     </div>
     <div class="navbar-nav ml-auto">
@@ -51,7 +50,7 @@
                     <a href="/admin" class="nav-link bg-primary text-white">Admin</a>
                 </li>
                 <li class="nav-item">
-                    <a href="/index" class="nav-link text-primary">User</a>
+                    <a href="/user" class="nav-link text-primary">User</a>
                 </li>
             </ul>
         </div>
@@ -91,7 +90,7 @@
                         <td th:text="${person.email}"></td>
                         <td>
                             <ul>
-                                <li th:each="role : ${person.role}" th:text="${role.name}"></li>
+                                <li th:each="role : ${person.roles}" th:text="${role}"></li>
                             </ul>
                         </td>
                         <td>
@@ -146,9 +145,9 @@
                         <label for="newUser_Email"><strong>Email</strong></label>
                         <input type="email" class="form-control" id="newUser_Email" name="newUser_Email" required>
                     </div>
-                    <div class="form-group">
+                    <div multiple class="form-group">
                         <label for="newUser_Role" class="col-form-label"><strong>Role</strong></label>
-                        <select size="2" class="form-control" id="newUser_Role" name="newUser_Role">
+                        <select multiple size="2" class="form-control" id="newUser_Role" name="newUser_Role">
                             <option value="ROLE_ADMIN">Admin</option>
                             <option value="ROLE_USER">User</option>
                         </select>
@@ -194,7 +193,7 @@
                     </div>
                     <div class="form-group">
                         <label for="user_Role" class="col-form-label"><strong>ROLE:</strong></label>
-                        <select size=2 class="form-control" id="user_Role" name="user_Role">
+                        <select multiple size=2 class="form-control" id="user_Role" name="user_Role">
                             <option value="ROLE_ADMIN">Admin</option>
                             <option value="ROLE_USER">User</option>
                         </select>
@@ -258,7 +257,7 @@
 <!-- Edit user script-->
 <script>
     $('#exampleModal').on('show.bs.modal', function (event) {
-        var button = $(event.relatedTarget); // Кнопка, которая активировала модальное окно
+        var button = $(event.relatedTarget);
         var id = button.data('id');
         var username = button.data('username');
         var email = button.data('email');

@@ -29,7 +29,7 @@ public class PersonDetailsService implements UserDetailsService {
 
         if (person.isEmpty())
             throw new UsernameNotFoundException("User not found");
-        Hibernate.initialize(person.get().getRole());
+        Hibernate.initialize(person.get().getRoles());
         return new PersonDetails(person.get());
     }
 }

@@ -91,11 +91,11 @@ public class Person {
         this.password = password;
     }
 
-    public Set<Role> getRole() {
+    public Set<Role> getRoles() {
         return roles;
     }
 
-    public void setRole(Set<Role> role) {
+    public void setRoles(Set<Role> role) {
         this.roles = role;
     }
 

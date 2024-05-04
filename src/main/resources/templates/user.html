@@ -25,7 +25,7 @@
     <div>
         <span class="text-white font-weight-bold" th:text="${person.email}"></span>
         <span class="text-white"> with roles: </span>
-        <span class="text-white font-weight-bold" th:each="role, iterStat : ${person.role}"
+        <span class="text-white font-weight-bold" th:each="role, iterStat : ${person.roles}"
               th:text="${role.name} + (iterStat.last ? '' : ', ')">
             </span>
     </div>
@@ -73,7 +73,7 @@
                         <td th:text="${person.email}"></td>
                         <td>
                             <ul>
-                                <li th:each="role : ${person.role}" th:text="${role.name}"></li>
+                                <li th:each="role : ${person.roles}" th:text="${role.name}"></li>
                             </ul>
                         </td>
                     </tr>
